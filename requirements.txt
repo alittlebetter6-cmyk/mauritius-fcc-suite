@@ -1,0 +1,6 @@
+streamlit>=1.36
+rapidfuzz>=3.9
+requests>=2.31
+# anthropic is optional -- only needed for the AI Analyst tab.
+# Included by default so the app works out of the box on Streamlit Cloud.
+anthropic>=0.40
