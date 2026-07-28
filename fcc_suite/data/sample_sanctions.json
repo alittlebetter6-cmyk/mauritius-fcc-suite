@@ -1,0 +1,16 @@
+{
+  "_meta": {
+    "note": "SAMPLE / DEMO data only, with fictional test entities plus a few well-known publicly-designated names for demonstration. In production, replace with live fetched lists (see sanctions.py). Do NOT rely on this file for real screening.",
+    "generated": "2026-07-28"
+  },
+  "entries": [
+    {"name": "Test Alpha Trading Ltd", "type": "entity", "list": "DEMO", "program": "TEST", "country": "MU", "aka": ["Alpha Trading", "Test Alpha Trading Limited"]},
+    {"name": "Ivan Petrov Volkov", "type": "individual", "list": "DEMO", "program": "TEST", "country": "RU", "aka": ["I. Volkov", "Ivan P. Volkov"], "dob": "1971-03-14"},
+    {"name": "Golden Sands Holdings", "type": "entity", "list": "DEMO", "program": "TEST", "country": "AE", "aka": ["Golden Sands Ltd"]},
+    {"name": "Kim Yong Nam", "type": "individual", "list": "UN-DEMO", "program": "DPRK", "country": "KP", "aka": ["Kim Yong-nam"]},
+    {"name": "Ali Hassan Mahmoud", "type": "individual", "list": "DEMO", "program": "CPF-TEST", "country": "IR", "aka": ["Ali H. Mahmoud", "Ali Mahmoud"], "dob": "1965-07-02"},
+    {"name": "Blue Horizon Shipping FZE", "type": "entity", "list": "DEMO", "program": "CPF-TEST", "country": "IR", "aka": ["Blue Horizon Shipping"]},
+    {"name": "Sea Star Maritime Company", "type": "entity", "list": "UN-DEMO", "program": "DPRK", "country": "KP", "aka": ["Sea Star Maritime"]},
+    {"name": "Grigory Aleksandrovich Sokolov", "type": "individual", "list": "DEMO", "program": "TEST", "country": "RU", "aka": ["G. Sokolov"], "dob": "1980-11-30"}
+  ]
+}
