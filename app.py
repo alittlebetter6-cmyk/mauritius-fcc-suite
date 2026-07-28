@@ -131,20 +131,32 @@ with tabs[1]:
     with colq:
         name = st.text_input("Name to screen", placeholder="e.g. Ivan Volkov / Alpha Trading Ltd")
         is_entity = st.checkbox("This is an entity / company", value=False)
-        threshold = st.slider("Match sensitivity (lower = more recall)", 60, 95, 72)
+        threshold = st.slider("Match sensitivity (lower = more recall)", 60, 95,80)
     with colo:
         picks = st.multiselect("Global lists", list(sanctions.SOURCES.keys()),
                                default=list(sanctions.SOURCES.keys()))
         st.caption("The Mauritius domestic (NSSec) list is **always** included — "
                    "screening it is a legal duty (UN Sanctions Act 2019 s.25).")
-        force = st.checkbox("Force refresh from source", value=False)
+        force = st.checkbox("Force refresh from source", value=   
+                            
+                            @st.cache_data(ttl=6 * 3600, show_spinner=False)
+    def _load_lists(codes_key: tuple):
+        recs, stats_ = sanctions.load_all(list(codes_key) or None)
+        return recs, [vars(x) for x in stats_]
 
     if st.button("Screen", type="primary"):
-        with st.spinner("Loading lists & screening…"):
-            records, statuses = sanctions.load_all(picks or None, force=force)
+        with st.spinner("Loading sanctions lists (first run can take a minute)…"):
+            if force:
+                _load_lists.clear()
+                records, statuses = sanctions.load_all(picks or None, force=True)
+                statuses = [vars(x) for x in statuses]
+            else:
+                records, statuses = _load_lists(tuple(picks or []))
             res = matching.screen_name(name, records, is_entity=is_entity,
                                        threshold=float(threshold)) if name.strip() else None
-        st.session_state["screen_statuses"] = [vars(x) for x in statuses]
+        st.session_state["screen_statuses"] = statuses
+
+    
         if res is not None:
             st.session_state["screen_result"] = {
                 "query": res.query, "band": res.band, "top": res.top_score,
@@ -154,12 +166,25 @@ with tabs[1]:
         else:
             st.session_state.pop("screen_result", None)
 
-    statuses = st.session_state.get("screen_statuses")
+        statuses = st.session_state.get("screen_statuses")
     if statuses:
         cols = st.columns(len(statuses))
         for col, stt in zip(cols, statuses):
-            tag = {"live": "🟢 live", "cache": "🟡 cached", "demo": "⚪ demo"}.get(stt["source"], stt["source"])
+            if stt["code"] == "MU-NSS" and stt["count"] == 0:
+                tag = "not set up"
+            else:
+                tag = {"live": "🟢 live", "cache": "🟡 cached", "demo": "⚪ demo"}.get(stt["source"], stt["source"])
             col.metric(stt["code"], f"{stt['count']:,}", tag)
+        global_demo = all(s["source"] == "demo" for s in statuses if s["code"] not in ("MU-NSS",))
+        if global_demo:
+            st.error("⚠️ **Sample data only** — the live UN/OFAC/UK lists could not be "
+                     "fetched, so this screening ran against a tiny built-in demo set. "
+                     "Results are NOT a real sanctions check. Tick **Force refresh** and "
+                     "screen again to retry the live download.")
+        elif any(s["source"] == "cache" for s in statuses):
+            st.caption("Some lists served from local cache (refreshed at most every 24h). "
+                       "Tick Force refresh for the very latest designations.")
+
 
     sr = st.session_state.get("screen_result")
     if sr:
