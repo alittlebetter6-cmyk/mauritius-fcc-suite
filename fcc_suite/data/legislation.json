@@ -1,0 +1,176 @@
+{
+  "_meta": {
+    "jurisdiction": "Republic of Mauritius",
+    "framework": "AML / CFT / CPF",
+    "curated_as_of": "2026-07-28",
+    "disclaimer": "Structured summaries and provision references for practitioner navigation. NOT a substitute for the official Gazette text. Always verify against the current consolidated Act on the Government of Mauritius / FSC / FIU websites before relying on a provision.",
+    "primary_sources": [
+      "Government of Mauritius Gazette",
+      "Financial Services Commission (FSC) AML/CFT Handbook",
+      "Financial Intelligence Unit (FIU) Mauritius",
+      "Financial Crimes Commission (FCC)",
+      "Bank of Mauritius (BoM) Guideline on AML/CFT"
+    ]
+  },
+  "acts": [
+    {
+      "id": "amla-2026",
+      "short": "AMLA 2026",
+      "title": "Anti-Money Laundering, Combatting the Financing of Terrorism and Countering Proliferation Financing Act 2026",
+      "status": "in force",
+      "year": 2026,
+      "regulator": ["FIU", "FCC", "FSC", "BoM"],
+      "summary": "Most comprehensive AML reform since FIAMLA. Consolidates and restructures the AML/CFT framework and introduces Countering Proliferation Financing (CPF) as a formal third compliance pillar alongside AML and CFT. Expands beneficial-ownership definitions to capture control beyond direct shareholding, compresses statutory response timelines, strengthens FCC/FIU powers, and establishes a Centralised Information Management System (CIMS).",
+      "key_changes": [
+        "CPF (Countering Proliferation Financing) becomes a mandatory third pillar requiring a distinct proliferation-financing risk assessment and dedicated screening.",
+        "Expanded beneficial ownership (BO) definitions capturing control beyond direct shareholding; UBO identification to new thresholds and BO-registry reporting timelines.",
+        "Revised statutory timelines (24h / 48h) for responding to regulatory and investigatory requests.",
+        "Increased inter-agency information sharing, including with the Mauritius Revenue Authority (MRA).",
+        "Introduction of a Centralised Information Management System (CIMS) for data collection, analytics and regulatory coordination.",
+        "Enhanced enforcement powers for the Financial Crimes Commission and FIU."
+      ],
+      "obligations": [
+        "Conduct and document a standalone CPF risk assessment (in addition to ML and TF).",
+        "Screen against proliferation-financing designations, not only ML/TF sanctions.",
+        "Update CDD and UBO processes to the expanded control-based BO definition.",
+        "Meet the 24h/48h response windows for competent-authority requests."
+      ],
+      "practitioner_notes": "Treat AMLA 2026 as a live compliance event. A framework adequate in 2022 is very likely non-compliant. Build CPF into the risk-assessment methodology as a first-class dimension, not a sub-note under sanctions."
+    },
+    {
+      "id": "fiamla-2002",
+      "short": "FIAMLA 2002",
+      "title": "Financial Intelligence and Anti-Money Laundering Act 2002",
+      "status": "in force (as amended)",
+      "year": 2002,
+      "regulator": ["FIU"],
+      "summary": "Foundational AML statute. Established the Financial Intelligence Unit (FIU), defined Reporting Persons, and created the suspicious-transaction reporting (STR) framework underpinning bank and DNFBP compliance across Mauritius. Amended repeatedly through the 2023-2026 reform cycle.",
+      "key_sections": [
+        {"ref": "s.2", "topic": "Interpretation", "note": "Definitions, including newly inserted 'proliferation financing risk'."},
+        {"ref": "s.17", "topic": "Risk-based AML/CFT programme", "note": "Requires a documented risk-based AML/CFT programme."},
+        {"ref": "s.18", "topic": "Suspicious Transaction Reports", "note": "Governs STR obligations and reporting to the FIU."},
+        {"ref": "s.22A", "topic": "Information exchange", "note": "Domestic and international exchange of AML/CFT/CPF information under strict conditions."},
+        {"ref": "s.32A", "topic": "Criminal liability", "note": "Establishes criminal liability for breaches."}
+      ],
+      "obligations": [
+        "Maintain a documented, risk-based AML/CFT programme (s.17).",
+        "File STRs with the FIU where suspicion of ML/TF arises (s.18).",
+        "Retain records supporting CDD and transaction monitoring."
+      ],
+      "practitioner_notes": "FIAMLA remains the anchor statute; read it together with the FIAML Regulations 2018 and the FSC AML/CFT Handbook for operational detail."
+    },
+    {
+      "id": "fiaml-regs-2018",
+      "short": "FIAML Regulations 2018",
+      "title": "Financial Intelligence and Anti-Money Laundering Regulations 2018",
+      "status": "in force (as amended)",
+      "year": 2018,
+      "regulator": ["FIU", "FSC"],
+      "summary": "Operational regulations under FIAMLA. Require mandatory designation of a Compliance Officer at senior-management level to maintain day-to-day AML oversight, and set out CDD, record-keeping and internal-control requirements.",
+      "obligations": [
+        "Designate a Compliance Officer / MLRO at senior-management level.",
+        "Apply risk-based CDD, ongoing monitoring and record-keeping.",
+        "Maintain internal policies, procedures and controls (PPCs)."
+      ],
+      "practitioner_notes": "The senior-management designation is a frequent FSC inspection finding — ensure board minutes evidence the appointment and reporting line."
+    },
+    {
+      "id": "admin-penalties-2025",
+      "short": "Admin Penalties Regs 2025 (GN 112/2025)",
+      "title": "Financial Intelligence and Anti-Money Laundering (Administrative Penalties) Regulations 2025",
+      "status": "in force",
+      "year": 2025,
+      "effective": "2025-11-18",
+      "regulator": ["FIU", "FSC"],
+      "summary": "Government Notice No. 112 of 2025. Introduced a tiered administrative-penalty framework with fines up to MUR 250,000 for KYC and reporting failures, effective 18 November 2025.",
+      "obligations": [
+        "KYC and reporting deficiencies now carry defined tiered penalties (up to MUR 250,000).",
+        "Maintain audit-ready evidence of CDD and STR compliance to avoid exposure."
+      ],
+      "practitioner_notes": "This shifted supervisory posture from guidance toward monetary enforcement — a strong commercial argument for proactive compliance tooling."
+    },
+    {
+      "id": "fcc-act-2023",
+      "short": "FCC Act 2023",
+      "title": "Financial Crimes Commission Act 2023",
+      "status": "in force",
+      "year": 2023,
+      "regulator": ["FCC"],
+      "summary": "Established the Financial Crimes Commission (FCC) as the apex financial-crime enforcement body (operational March 2024), consolidating functions previously spread across separate agencies (including the former ICAC). Amended by AMLA 2026 to speed up search-warrant, electronic-evidence and confiscation procedures.",
+      "obligations": [
+        "Cooperate with FCC investigatory and information requests within statutory timelines.",
+        "Recognise the FCC as the apex enforcement counterpart for financial-crime matters."
+      ],
+      "practitioner_notes": "The FCC is a public-sector-to-public-sector transition pathway and the primary enforcement counterparty for serious ML/predicate-offence matters."
+    },
+    {
+      "id": "fsa-2007",
+      "short": "FSA 2007",
+      "title": "Financial Services Act 2007",
+      "status": "in force (as amended)",
+      "year": 2007,
+      "regulator": ["FSC"],
+      "summary": "Constitutes and empowers the Financial Services Commission (FSC) as the integrated regulator for non-bank financial services and global business. Governs licensing of management companies, GBCs, funds, securities dealers and other DNFBP-adjacent entities.",
+      "obligations": [
+        "Hold and maintain the appropriate FSC licence for the regulated activity.",
+        "For GBCs: maintain economic substance, including at least two resident directors in Mauritius.",
+        "Comply with FSC Rules, including administrative-penalty and settlement rules (2025)."
+      ],
+      "practitioner_notes": "Licensing status and substance requirements are gating items in any onboarding of an FSC-regulated counterparty."
+    },
+    {
+      "id": "banking-act-2004",
+      "short": "Banking Act 2004",
+      "title": "Banking Act 2004",
+      "status": "in force (as amended)",
+      "year": 2004,
+      "regulator": ["BoM"],
+      "summary": "Governs the licensing and prudential/AML supervision of banks and non-bank deposit-taking institutions by the Bank of Mauritius (BoM). Read together with the BoM Guideline on AML/CFT.",
+      "obligations": [
+        "Banks must comply with BoM AML/CFT Guideline in addition to FIAMLA.",
+        "Maintain fit-and-proper standards and prudential controls."
+      ],
+      "practitioner_notes": "For bank-facing work, the BoM Guideline is the operative AML standard; FSC Handbook applies to non-bank licensees."
+    },
+    {
+      "id": "un-sanctions-act-2019",
+      "short": "UN Sanctions Act 2019",
+      "title": "United Nations (Financial Prohibitions, Arms Embargo and Travel Ban) Sanctions Act 2019",
+      "status": "in force (as amended)",
+      "year": 2019,
+      "regulator": ["National Sanctions Secretariat", "National Sanctions Committee"],
+      "summary": "Domestic implementation of UN Security Council targeted financial sanctions. Establishes the National Sanctions Committee and Secretariat. Amended in the 2026 cycle so the Committee includes the Registrar of Associations, with immediate notification of designations to the FIU and supervisors, and stronger NPO/NPC-sector oversight for TF/PF risk.",
+      "obligations": [
+        "Screen against UN Security Council designations and the Mauritius national list.",
+        "Freeze without delay and report to the National Sanctions Secretariat on a match.",
+        "Notify designations to the FIU and relevant supervisor immediately."
+      ],
+      "practitioner_notes": "Mauritius operates a domestic sanctions list in addition to UN designations — screening only OFAC/UN is insufficient for local obligations."
+    },
+    {
+      "id": "poca-2002",
+      "short": "POCA 2002",
+      "title": "Prevention of Corruption Act 2002",
+      "status": "in force (as amended)",
+      "year": 2002,
+      "regulator": ["FCC"],
+      "summary": "Corruption and money-laundering predicate-offence statute. Historically enforced by ICAC, now within the FCC's remit. Relevant to procurement-fraud and bribery typologies and to laundering of corruption proceeds.",
+      "key_sections": [
+        {"ref": "s.7(1)", "topic": "Bribery of/by public official", "note": "Core corruption offence used in procurement-fraud analysis."},
+        {"ref": "s.83", "topic": "Money laundering", "note": "Laundering offence provision applied to proceeds of corruption."}
+      ],
+      "obligations": [
+        "Treat corruption as a predicate offence for ML risk assessment.",
+        "Apply enhanced scrutiny to PEP and public-procurement exposure."
+      ],
+      "practitioner_notes": "Key statute for procurement-fraud and PEP typologies; pair with FATF corruption red-flag indicators."
+    }
+  ],
+  "regulators": [
+    {"code": "FIU", "name": "Financial Intelligence Unit", "role": "Receives and analyses STRs; national FIU."},
+    {"code": "FSC", "name": "Financial Services Commission", "role": "Integrated regulator for non-bank financial services and global business."},
+    {"code": "FCC", "name": "Financial Crimes Commission", "role": "Apex financial-crime enforcement body (est. 2024)."},
+    {"code": "BoM", "name": "Bank of Mauritius", "role": "Central bank; licenses and supervises banks incl. AML/CFT."},
+    {"code": "NSS", "name": "National Sanctions Secretariat", "role": "Administers targeted financial sanctions and the national list."}
+  ]
+}
