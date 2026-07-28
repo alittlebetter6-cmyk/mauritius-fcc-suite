@@ -131,15 +131,15 @@ with tabs[1]:
     with colq:
         name = st.text_input("Name to screen", placeholder="e.g. Ivan Volkov / Alpha Trading Ltd")
         is_entity = st.checkbox("This is an entity / company", value=False)
-        threshold = st.slider("Match sensitivity (lower = more recall)", 60, 95,80)
+        threshold = st.slider("Match sensitivity (lower = more recall)", 60, 95, 80)
     with colo:
         picks = st.multiselect("Global lists", list(sanctions.SOURCES.keys()),
                                default=list(sanctions.SOURCES.keys()))
         st.caption("The Mauritius domestic (NSSec) list is **always** included — "
                    "screening it is a legal duty (UN Sanctions Act 2019 s.25).")
-        force = st.checkbox("Force refresh from source", value=   
-                            
-                            @st.cache_data(ttl=6 * 3600, show_spinner=False)
+        force = st.checkbox("Force refresh from source", value=False)
+
+    @st.cache_data(ttl=6 * 3600, show_spinner=False)
     def _load_lists(codes_key: tuple):
         recs, stats_ = sanctions.load_all(list(codes_key) or None)
         return recs, [vars(x) for x in stats_]
@@ -155,8 +155,6 @@ with tabs[1]:
             res = matching.screen_name(name, records, is_entity=is_entity,
                                        threshold=float(threshold)) if name.strip() else None
         st.session_state["screen_statuses"] = statuses
-
-    
         if res is not None:
             st.session_state["screen_result"] = {
                 "query": res.query, "band": res.band, "top": res.top_score,
@@ -166,7 +164,7 @@ with tabs[1]:
         else:
             st.session_state.pop("screen_result", None)
 
-        statuses = st.session_state.get("screen_statuses")
+    statuses = st.session_state.get("screen_statuses")
     if statuses:
         cols = st.columns(len(statuses))
         for col, stt in zip(cols, statuses):
@@ -184,7 +182,6 @@ with tabs[1]:
         elif any(s["source"] == "cache" for s in statuses):
             st.caption("Some lists served from local cache (refreshed at most every 24h). "
                        "Tick Force refresh for the very latest designations.")
-
 
     sr = st.session_state.get("screen_result")
     if sr:
