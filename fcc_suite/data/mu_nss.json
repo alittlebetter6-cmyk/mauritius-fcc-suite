@@ -1,0 +1,27 @@
+{
+  "_meta": {
+    "list": "Mauritius Domestic Sanctions List (National Sanctions Secretariat)",
+    "authority": "National Sanctions Secretariat (NSSec), Prime Minister's Office (Home Affairs)",
+    "legal_basis": "United Nations (Financial Prohibitions, Arms Embargo and Travel Ban) Sanctions Act 2019 — domestic designation regime",
+    "obligation": "Section 25: on any new designation, every reporting person must IMMEDIATELY verify the designated party against its customer/BO database; on a true match, freeze without delay and report to the NSSec.",
+    "source_of_truth": "NSSec public notices / Government Gazette (nssec.govmu.org). This file is a MANUALLY MAINTAINED transcription for screening convenience — the Gazette notice always prevails.",
+    "maintenance": "Update from each NSSec public notice. Record provenance (notice_ref, gazette_date, designation_date) for every entry so screening decisions are defensible on inspection.",
+    "last_reviewed": "2026-07-28",
+    "reviewed_by": ""
+  },
+  "entries": [
+    {
+      "name": "SAMPLE DOMESTIC DESIGNATION — replace with real NSSec notices",
+      "type": "individual",
+      "list": "MU-NSS",
+      "program": "DOMESTIC-TF",
+      "country": "MU",
+      "aka": [],
+      "designation_date": "",
+      "notice_ref": "",
+      "gazette_date": "",
+      "added_by": "sample",
+      "note": "Placeholder. Delete once real domestic designations are entered."
+    }
+  ]
+}
