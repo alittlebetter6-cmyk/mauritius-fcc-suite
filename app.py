@@ -41,7 +41,6 @@ def badge(text: str, cls: str) -> str:
     return f'<span class="badge b-{str(cls).lower()}">{text}</span>'
 
 
-# ---- sidebar: identity + system status ------------------------------------
 with st.sidebar:
     st.markdown("### Operator")
     officer = st.text_input("Officer / MLRO name", key="officer",
@@ -75,7 +74,6 @@ tabs = st.tabs(["🏠 Dashboard", "🔎 Sanctions Screening", "📊 Risk Assessm
 
 
 def _open_case_picker(key: str):
-    """Return (case_id or None). Lets user pick an open case or create one inline."""
     cases = store.list_cases()
     labels = ["— select case —"] + [f"#{c['id']} · {c['ref']} · {c['subject']} [{c['status']}]"
                                     for c in cases]
@@ -139,19 +137,10 @@ with tabs[1]:
                    "screening it is a legal duty (UN Sanctions Act 2019 s.25).")
         force = st.checkbox("Force refresh from source", value=False)
 
-    @st.cache_data(ttl=6 * 3600, show_spinner=False)
-    def _load_lists(codes_key: tuple):
-        recs, stats_ = sanctions.load_all(list(codes_key) or None)
-        return recs, [vars(x) for x in stats_]
-
     if st.button("Screen", type="primary"):
         with st.spinner("Loading sanctions lists (first run can take a minute)…"):
-            if force:
-                _load_lists.clear()
-                records, statuses = sanctions.load_all(picks or None, force=True)
-                statuses = [vars(x) for x in statuses]
-            else:
-                records, statuses = _load_lists(tuple(picks or []))
+            records, raw_statuses = sanctions.load_all(picks or None, force=force)
+            statuses = [vars(x) for x in raw_statuses]
             res = matching.screen_name(name, records, is_entity=is_entity,
                                        threshold=float(threshold)) if name.strip() else None
         st.session_state["screen_statuses"] = statuses
@@ -173,13 +162,13 @@ with tabs[1]:
             else:
                 tag = {"live": "🟢 live", "cache": "🟡 cached", "demo": "⚪ demo"}.get(stt["source"], stt["source"])
             col.metric(stt["code"], f"{stt['count']:,}", tag)
-        global_demo = all(s["source"] == "demo" for s in statuses if s["code"] not in ("MU-NSS",))
+        global_demo = all(s_item["source"] == "demo" for s_item in statuses if s_item["code"] not in ("MU-NSS",))
         if global_demo:
             st.error("⚠️ **Sample data only** — the live UN/OFAC/UK lists could not be "
                      "fetched, so this screening ran against a tiny built-in demo set. "
                      "Results are NOT a real sanctions check. Tick **Force refresh** and "
                      "screen again to retry the live download.")
-        elif any(s["source"] == "cache" for s in statuses):
+        elif any(s_item["source"] == "cache" for s_item in statuses):
             st.caption("Some lists served from local cache (refreshed at most every 24h). "
                        "Tick Force refresh for the very latest designations.")
 
@@ -404,7 +393,7 @@ with tabs[3]:
     st.markdown("#### Global audit log")
     okc, badc = store.verify_audit_chain()
     st.markdown(("🔒 **Chain intact** — no evidence of tampering."
-                 if okc else f"🚨 **Chain broken at event #{badc}** — records altered.") )
+                 if okc else f"🚨 **Chain broken at event #{badc}** — records altered."))
     trail = store.get_audit_trail(None, limit=1000)
     if trail:
         buf = io.StringIO()
