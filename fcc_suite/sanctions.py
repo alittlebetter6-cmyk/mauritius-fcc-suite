@@ -1,17 +1,5 @@
 """
 Sanctions & watchlist data layer.
-
-Design goals
-------------
-* Pull authoritative public lists (UN, OFAC, UK OFSI) on demand and cache them.
-* Degrade gracefully offline: if a live fetch fails, fall back to the last
-  cached copy, and if none exists, to the bundled demo dataset — so the app
-  always runs, while never silently pretending demo data is real.
-* Keep every record in one normalised shape for the screening engine.
-
-IMPORTANT (production): the EU consolidated list now requires an access token,
-and Mauritius's National Sanctions Secretariat list is published separately by
-the NSS — wire those in with your credentials/URL in SOURCES below.
 """
 from __future__ import annotations
 
@@ -26,14 +14,17 @@ from pathlib import Path
 
 try:
     import requests
-except Exception:  # requests optional until first live fetch
+except Exception:
     requests = None
 
 DATA_DIR = Path(__file__).parent / "data"
-CACHE_DIR = DATA_DIR / "sanctions_cache"
-CACHE_DIR.mkdir(exist_ok=True)
+CACHE_DIR = Path(os.environ.get("FCC_CACHE", "/tmp/fcc_sanctions_cache"))
+try:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    CACHE_DIR = Path("/tmp/fcc_sanctions_cache")
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-# Authoritative public sources. Verify URLs periodically — publishers move them.
 SOURCES = {
     "UN": {
         "label": "UN Security Council Consolidated List",
@@ -50,12 +41,9 @@ SOURCES = {
         "url": "https://ofsistorage.blob.core.windows.net/publishlive/2022format/ConList.csv",
         "kind": "uk_csv",
     },
-    # Placeholders to be completed with your access:
-    # "EU": {"label": "EU Consolidated List", "url": "<tokenised EU url>", "kind": "eu_xml"},
-    # "MU_NSS": {"label": "Mauritius National Sanctions List", "url": "<NSS url>", "kind": "mu_csv"},
 }
 
-CACHE_TTL = 24 * 3600  # refresh at most once/day by default
+CACHE_TTL = 24 * 3600
 
 
 @dataclass
@@ -63,7 +51,7 @@ class ListStatus:
     code: str
     label: str
     count: int
-    source: str  # "live", "cache", or "demo"
+    source: str
     fetched_at: float | None = None
     error: str | None = None
 
@@ -73,8 +61,11 @@ def _cache_path(code: str) -> Path:
 
 
 def _write_cache(code: str, records: list[dict]) -> None:
-    payload = {"fetched_at": time.time(), "records": records}
-    _cache_path(code).write_text(json.dumps(payload))
+    try:
+        payload = {"fetched_at": time.time(), "records": records}
+        _cache_path(code).write_text(json.dumps(payload))
+    except Exception:
+        pass
 
 
 def _read_cache(code: str) -> dict | None:
@@ -87,12 +78,9 @@ def _read_cache(code: str) -> dict | None:
     return None
 
 
-# ---- Parsers: each returns a list of normalised records -------------------
-
 def _parse_un_xml(raw: bytes) -> list[dict]:
     out: list[dict] = []
     root = ET.fromstring(raw)
-    # Individuals
     for ind in root.iter("INDIVIDUAL"):
         first = (ind.findtext("FIRST_NAME") or "").strip()
         second = (ind.findtext("SECOND_NAME") or "").strip()
@@ -120,7 +108,6 @@ def _parse_ofac_csv(raw: bytes) -> list[dict]:
     for row in reader:
         if len(row) < 3:
             continue
-        # OFAC sdn.csv: ent_num, SDN_Name, SDN_Type, Program, ...
         name = row[1].strip().strip('"')
         sdn_type = row[2].strip().strip('"')
         program = row[3].strip().strip('"') if len(row) > 3 else ""
@@ -136,7 +123,6 @@ def _parse_uk_csv(raw: bytes) -> list[dict]:
     out: list[dict] = []
     text = raw.decode("utf-8", errors="replace")
     lines = text.splitlines()
-    # OFSI file has a title line before the header; find the header row.
     start = 0
     for i, ln in enumerate(lines[:5]):
         if "Name 1" in ln or "Group Type" in ln:
@@ -164,7 +150,6 @@ _PARSERS = {
 
 
 def fetch_list(code: str, force: bool = False, timeout: int = 30) -> tuple[list[dict], ListStatus]:
-    """Fetch one list, using cache within TTL. Returns (records, status)."""
     src = SOURCES.get(code)
     if not src:
         return [], ListStatus(code, code, 0, "demo", error="unknown source")
@@ -189,7 +174,7 @@ def fetch_list(code: str, force: bool = False, timeout: int = 30) -> tuple[list[
         records = _PARSERS[src["kind"]](resp.content)
         _write_cache(code, records)
         return records, ListStatus(code, src["label"], len(records), "live", time.time())
-    except Exception as e:  # graceful fallback to cache
+    except Exception as e:
         if cache:
             recs = cache["records"]
             return recs, ListStatus(code, src["label"], len(recs), "cache",
@@ -202,19 +187,24 @@ def load_demo() -> list[dict]:
     return data["entries"]
 
 
-# ---- Mauritius domestic list (NSSec) — analyst-maintained register ---------
-# The domestic list is published as NSSec public notices / Gazette entries, not
-# a machine feed, so it is maintained locally with provenance and screened like
-# any other source. Screening against UN + this domestic list is a LEGAL
-# requirement under the UN Sanctions Act 2019 (s.25).
-
 MU_NSS_FILE = DATA_DIR / "mu_nss.json"
+_MU_NSS_WRITABLE = Path("/tmp/fcc_mu_nss.json")
+
+
+def _nss_path() -> Path:
+    if _MU_NSS_WRITABLE.exists():
+        return _MU_NSS_WRITABLE
+    return MU_NSS_FILE
 
 
 def load_mu_nss(include_sample: bool = False) -> list[dict]:
-    if not MU_NSS_FILE.exists():
+    p = _nss_path()
+    if not p.exists():
         return []
-    data = json.loads(MU_NSS_FILE.read_text())
+    try:
+        data = json.loads(p.read_text())
+    except Exception:
+        return []
     entries = data.get("entries", [])
     if not include_sample:
         entries = [e for e in entries if e.get("added_by") != "sample"]
@@ -222,16 +212,55 @@ def load_mu_nss(include_sample: bool = False) -> list[dict]:
 
 
 def mu_nss_meta() -> dict:
-    if not MU_NSS_FILE.exists():
+    p = _nss_path()
+    if not p.exists():
         return {}
-    return json.loads(MU_NSS_FILE.read_text()).get("_meta", {})
+    try:
+        return json.loads(p.read_text()).get("_meta", {})
+    except Exception:
+        return {}
 
 
 def add_mu_nss_entry(entry: dict) -> None:
-    """Append a domestic designation with provenance and re-save the register."""
-    data = json.loads(MU_NSS_FILE.read_text()) if MU_NSS_FILE.exists() else \
-        {"_meta": {}, "entries": []}
+    p = _nss_path()
+    try:
+        data = json.loads(p.read_text()) if p.exists() else {"_meta": {}, "entries": []}
+    except Exception:
+        data = {"_meta": {}, "entries": []}
     entry.setdefault("list", "MU-NSS")
     entry.setdefault("aka", [])
     data["entries"] = [e for e in data.get("entries", []) if e.get("added_by") != "sample"]
     data["entries"].append(entry)
+    _MU_NSS_WRITABLE.write_text(json.dumps(data, indent=2))
+
+
+def load_all(codes: list[str] | None = None, force: bool = False,
+             include_domestic: bool = True):
+    codes = codes or list(SOURCES.keys())
+    all_records: list[dict] = []
+    statuses: list[ListStatus] = []
+    any_real = False
+    for code in codes:
+        recs, st = fetch_list(code, force=force)
+        statuses.append(st)
+        if recs:
+            any_real = True
+            all_records.extend(recs)
+
+    if include_domestic:
+        nss = load_mu_nss()
+        if nss:
+            any_real = True
+            all_records.extend(nss)
+            statuses.append(ListStatus("MU-NSS",
+                            "Mauritius Domestic List (NSSec)", len(nss), "live"))
+        else:
+            statuses.append(ListStatus("MU-NSS",
+                            "Mauritius Domestic List (NSSec)", 0, "demo",
+                            error="no domestic designations entered yet"))
+
+    if not any_real:
+        demo = load_demo()
+        all_records.extend(demo)
+        statuses.append(ListStatus("DEMO", "Bundled demo dataset", len(demo), "demo"))
+    return all_records, statuses
